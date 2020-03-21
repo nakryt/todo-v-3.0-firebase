@@ -28,10 +28,7 @@ export const AlertState:React.FC = ({children}) => {
         dispatch({type: HIDE_ALERT})
     }
     return (
-        <AlertContext.Provider value={{
-            ...state, show, hide, error,
-
-        }}>
+        <AlertContext.Provider value={{ ...state, show, hide, error }}>
             {children}
         </AlertContext.Provider>
     )
