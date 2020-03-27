@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { TNote } from "../appTypes";
 import { ListGroupItem } from "react-bootstrap";
+import getWindowSize from "../utils/getWindowSize"
 
 type TProps = {
     onClick: (id: string) => void
@@ -9,12 +10,13 @@ type TProps = {
     onImportantClick: (id: string) => void
     note: TNote
 }
+type TInputChange = React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>
 
 const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportantClick }) => {
     const { id, title, date, important, done, showButton = true } = note
     const [isEdit, setIsEdit] = useState(false)
     const [editText, setEditText] = useState(title)
-    const changeEditTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const changeEditTextHandler = (e: TInputChange) => {
         setEditText(e.target.value)
     }
     const saveHandler = (e:React.FormEvent) => {
@@ -27,6 +29,7 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
         setIsEdit(false)
     }
 
+    const { width: windowWidth } = getWindowSize()
     return (
         <ListGroupItem as='li'
             className={`d-flex justify-content-between align-items-center ${id === 'default' && 'position-absolute'}`}
@@ -34,31 +37,44 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
             {
                 isEdit ?
                     <form className='editInputWrap mr-2' onSubmit={saveHandler} >
-                        <input
-                            className='pl-2 pr-5 d-flex flex-grow-1'
-                            value={editText}
-                            onChange={changeEditTextHandler}
-                            autoFocus
-                        />
+                        {
+                            windowWidth && windowWidth > 768 ? 
+                            <input
+                                className='px-2 d-flex flex-grow-1 editInput'
+                                value={editText}
+                                onChange={changeEditTextHandler}
+                                autoFocus
+                            /> :
+                            <textarea
+                                className='px-2 d-flex flex-grow-1 editInput'
+                                value={editText}
+                                onChange={changeEditTextHandler}
+                                autoFocus
+                            />
+                        }
+                        
+
                         <div className='editIconsWrap'>
-                            <i className='fa fa-check mr-2 text-success' onClick={saveHandler} />
-                            <i className='fa fa-times text-danger' onClick={cancelHandler} />
+                            <i className='fa fa-check mr-3 text-success' title='Сохранить' onClick={saveHandler} />
+                            <i className='fa fa-times text-danger' title='Отмена' onClick={cancelHandler} />
                         </div>
                     </form> :
-                    <div className='btn' onClick={() => onClick(id)}>
+                    <div className='cursor-pointer' onClick={() => onClick(id)}>
                         {
                             done ?
-                                <s>
-                                    <span className={`mr-3 ${important && 'text-danger'}`}>
-                                        {title}
-                                    </span>
-                                    <small>{date}</small>
-                                </s> :
+                                <>
+                                    <s>
+                                        <span className={`mr-3 ${important && 'text-danger'}`}>
+                                            {title}
+                                        </span>
+                                    </s>
+                                    <small className='date'>{date}</small>
+                                </> :
                                 <>
                                     <strong className={`mr-3 ${important && 'text-danger'}`}>
                                         {title}
                                     </strong>
-                                    <small>{date}</small>
+                                    <small className='date'>{date}</small>
                                 </>
                         }
                     </div>
