@@ -1,8 +1,8 @@
-import {SHOW_LOADER, TNoteActions, ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE} from "../actionTypes";
-import {TFirebaseState} from "./FirebaseState";
-import {createDefaultNote} from "./FirebaseState";
+import { SHOW_LOADER, TNoteActions, ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE, CHANGE_IMPORTANT_PROP, CHANGE_DONE_PROP } from "../actionTypes";
+import { TFirebaseState } from "./FirebaseState";
+import { createDefaultNote } from "./FirebaseState";
 
-export const firebaseReducer = (state:TFirebaseState, action:TNoteActions) => {
+export const firebaseReducer = (state: TFirebaseState, action: TNoteActions) => {
     switch (action.type) {
         case SHOW_LOADER:
             return { ...state, loading: true }
@@ -12,17 +12,15 @@ export const firebaseReducer = (state:TFirebaseState, action:TNoteActions) => {
             }
             return {
                 ...state,
-                notes: [ ...state.notes, action.payload ]
+                notes: [...state.notes, action.payload]
             }
         case EDIT_NOTE:
             return {
                 ...state,
-                notes: state.notes.map(item => {
-                    if (item.id === action.payload.id) {
-                        return {...item, date: action.payload.date, title: action.payload.title}
-                    }
-                    return item
-                })
+                notes: state.notes.map(item =>
+                    item.id === action.payload.id ?
+                        { ...item, date: action.payload.date, title: action.payload.title } :
+                        item)
             }
         case FETCH_NOTES:
             return {
@@ -31,7 +29,7 @@ export const firebaseReducer = (state:TFirebaseState, action:TNoteActions) => {
                 loading: false
             }
         case REMOVE_NOTE:
-            const notes = state.notes.filter(note => note.id !== action.payload)
+            const notes = state.notes.filter(note => note.id !== action.id)
             if (!notes.length) {
                 return {
                     ...state,
@@ -39,6 +37,18 @@ export const firebaseReducer = (state:TFirebaseState, action:TNoteActions) => {
                 }
             }
             return { ...state, notes }
+        case CHANGE_IMPORTANT_PROP:
+            return {
+                ...state,
+                notes: state.notes.map(item =>
+                    item.id === action.id ? { ...item, important: !item.important } : { ...item })
+            }
+        case CHANGE_DONE_PROP:
+            return {
+                ...state,
+                notes: state.notes.map(item =>
+                    item.id === action.id ? { ...item, done: !item.done } : { ...item })
+            }
         default:
             return state
     }

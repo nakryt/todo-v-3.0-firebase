@@ -15,6 +15,9 @@ export const ADD_NOTE = 'ADD_NOTE'
 export const EDIT_NOTE = 'EDIT_NOTE'
 export const FETCH_NOTES = 'FETCH_NOTES'
 export const REMOVE_NOTE = 'REMOVE_NOTE'
+export const CHANGE_IMPORTANT_PROP = 'CHANGE_IMPORTANT_PROP'
+export const CHANGE_DONE_PROP = 'CHANGE_DONE_PROP'
+
 export type TShowLoader = {
     type: typeof SHOW_LOADER
 }
@@ -32,8 +35,17 @@ export type TFetchNotes = {
 }
 export type TRemoveNote = {
     type: typeof REMOVE_NOTE
-    payload: string
+    id: string
+}
+export type TChangeImportantProp = {
+    type: typeof CHANGE_IMPORTANT_PROP
+    id: string
+}
+export type TChangeDoneProp = {
+    type: typeof CHANGE_DONE_PROP
+    id: string
 }
 
 export type TAlertActions = TAlertShow | TAlertHide
-export type TNoteActions = TShowLoader | TAddNote | TEditNote | TFetchNotes | TRemoveNote 
+export type TNoteActions = TShowLoader | TAddNote | TEditNote |
+    TFetchNotes | TRemoveNote | TChangeImportantProp | TChangeDoneProp

@@ -1,6 +1,8 @@
 export type TNote = {
     id: string
     title: string
+    important: boolean
+    done: boolean
     date?: string
     showButton?: boolean
 }

@@ -2,7 +2,7 @@ import React, {useContext, useReducer} from "react"
 import { FirebaseContext } from "./firebaseContext";
 import {firebaseReducer} from "./firebaseReducer";
 import {TNote, TNotes} from "../../appTypes";
-import {ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE, SHOW_LOADER} from "../actionTypes";
+import {ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE, SHOW_LOADER, CHANGE_IMPORTANT_PROP, CHANGE_DONE_PROP} from "../actionTypes";
 import axios from 'axios'
 import {AlertContext} from "../alert/alertContext";
 
@@ -13,20 +13,25 @@ export type TFirebaseState = {
     loading: boolean,
     showLoader: () => void
     addNote: (title: string) => Promise<number>
-    editNote: (id: string, title: string) => Promise<number>
+    editNote: (note: TNote, title: string) => Promise<number>
     removeNote: (id: string) => Promise<number>
     fetchNotes: () => void
+    changeImportantProp: (id: string) => void
+    changeDoneProp: (id: string) => void
 }
 export const firebaseInitialState:TFirebaseState = {
     notes: [],
     loading: true,
     showLoader: () => {},
     addNote: title => new Promise(() => {}),
-    editNote: (id, title) => new Promise(() => {}),
+    editNote: (note, title) => new Promise(() => {}),
     removeNote: id => new Promise(() => {}),
-    fetchNotes: () => {}
+    fetchNotes: () => {},
+    changeImportantProp: (id) => {},
+    changeDoneProp: (id) => {}
 }
-export const createDefaultNote = ():TNote => ({ id: 'default', title: 'Список пуст', showButton: false })
+export const createDefaultNote = ():TNote =>
+    ({ id: 'default', title: 'Список пуст', showButton: false, important: false, done: false })
 const FirebaseState: React.FC = ({children}) => {
     const alert = useContext(AlertContext)
     const [state, dispatch] = useReducer(firebaseReducer, firebaseInitialState)
@@ -56,7 +61,7 @@ const FirebaseState: React.FC = ({children}) => {
     const addNote = async (title: string):Promise<number> => {
         const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
         const date = new Date().toLocaleString('ru-RU', options)
-        const note = { title, date }
+        const note = { title, date, important: false, done: true }
         try {
             const res = await axios.post(`${url}/notes.json`, note)
             const payload = {
@@ -71,13 +76,14 @@ const FirebaseState: React.FC = ({children}) => {
             return 1
         }
     }
-    const editNote = async (id: string, title: string):Promise<number> => {
+    const editNote = async (note: TNote, title: string):Promise<number> => {
         const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
         const date = new Date().toLocaleString('ru-RU', options)
-        const note = { title, date }
+        const newNote = { ...note, title, date }
+        const { id } = note
         try {
-            await axios.put(`${url}/notes/${id}.json`, note)
-            dispatch({ type: EDIT_NOTE, payload: {...note, id} })
+            await axios.put(`${url}/notes/${id}.json`, newNote)
+            dispatch({ type: EDIT_NOTE, payload: {...newNote} })
             alert.show('Заметка была изменена', 'success')
             setTimeout(alert.hide, 5000)
             return 0
@@ -89,7 +95,7 @@ const FirebaseState: React.FC = ({children}) => {
     const removeNote = async (id: string):Promise<number> => {
         try {
             await axios.delete(`${url}/notes/${id}.json`)
-            dispatch({ type: REMOVE_NOTE, payload: id })
+            dispatch({ type: REMOVE_NOTE, id })
             alert.show('Заметка была удалена!')
             setTimeout(alert.hide, 5000)
             return 0
@@ -97,11 +103,39 @@ const FirebaseState: React.FC = ({children}) => {
             alert.error(e.message)
             return 1
         }
-
+    }
+    const changeImportantProp = async (id: string) => {
+        const note = state.notes.find(item => item.id === id)
+        const newNote = { ...note, important: !note!.important }
+        try {
+            await axios.put(`${url}/notes/${id}.json`, newNote)
+            dispatch({ type: CHANGE_IMPORTANT_PROP, id })
+            return 0
+        } catch (e) {
+            alert.error(e.message)
+        }
+    }
+    const changeDoneProp = async (id: string) => {
+        const note = state.notes.find(item => item.id === id)
+        const newNote = { ...note, done: !note!.done }
+        try {
+            await axios.put(`${url}/notes/${id}.json`, newNote)
+            dispatch({ type: CHANGE_DONE_PROP, id })
+            return 0
+        } catch (e) {
+            alert.error(e.message)
+        }
     }
     return (
         <FirebaseContext.Provider value={{
-            ...state, showLoader, addNote, editNote, removeNote, fetchNotes
+            ...state,
+            showLoader,
+            addNote,
+            editNote,
+            removeNote,
+            fetchNotes,
+            changeImportantProp,
+            changeDoneProp
         }}>
             {children}
         </FirebaseContext.Provider>
