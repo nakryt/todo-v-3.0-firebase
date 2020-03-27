@@ -12,6 +12,7 @@ export type TAlertHide = {
 
 export const SHOW_LOADER = 'SHOW_LOADER'
 export const ADD_NOTE = 'ADD_NOTE'
+export const EDIT_NOTE = 'EDIT_NOTE'
 export const FETCH_NOTES = 'FETCH_NOTES'
 export const REMOVE_NOTE = 'REMOVE_NOTE'
 export type TShowLoader = {
@@ -19,6 +20,10 @@ export type TShowLoader = {
 }
 export type TAddNote = {
     type: typeof ADD_NOTE
+    payload: TNote
+}
+export type TEditNote = {
+    type: typeof EDIT_NOTE
     payload: TNote
 }
 export type TFetchNotes = {
@@ -31,4 +36,4 @@ export type TRemoveNote = {
 }
 
 export type TAlertActions = TAlertShow | TAlertHide
-export type TNoteActions = TShowLoader | TAddNote | TFetchNotes | TRemoveNote
+export type TNoteActions = TShowLoader | TAddNote | TEditNote | TFetchNotes | TRemoveNote 

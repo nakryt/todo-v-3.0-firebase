@@ -5,9 +5,12 @@ import {FirebaseContext} from "../context/firebase/firebaseContext";
 import Loader from "../components/Loader";
 
 const Home: React.FC = () => {
-    const { loading, notes, fetchNotes, removeNote } = useContext(FirebaseContext)
+    const { loading, notes, fetchNotes, removeNote, editNote } = useContext(FirebaseContext)
     const removeNoteHandler = async (id: string) => {
         await removeNote(id)
+    }
+    const changeNoteHandler = async (id: string, title: string) => {
+        editNote(id, title)
     }
     useEffect(() => {
         fetchNotes()
@@ -18,7 +21,9 @@ const Home: React.FC = () => {
         <>
             <Form />
             <hr/>
-            { loading ? <Loader size={4}/> : <Notes notes={notes} onRemove={removeNoteHandler}/> }
+            { loading ? <Loader size={4}/> :
+                <Notes notes={notes} onRemove={removeNoteHandler} onChange={changeNoteHandler}/>
+            }
 
         </>
     )

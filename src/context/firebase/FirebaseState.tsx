@@ -2,7 +2,7 @@ import React, {useContext, useReducer} from "react"
 import { FirebaseContext } from "./firebaseContext";
 import {firebaseReducer} from "./firebaseReducer";
 import {TNote, TNotes} from "../../appTypes";
-import {ADD_NOTE, FETCH_NOTES, REMOVE_NOTE, SHOW_LOADER} from "../actionTypes";
+import {ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE, SHOW_LOADER} from "../actionTypes";
 import axios from 'axios'
 import {AlertContext} from "../alert/alertContext";
 
@@ -13,6 +13,7 @@ export type TFirebaseState = {
     loading: boolean,
     showLoader: () => void
     addNote: (title: string) => Promise<number>
+    editNote: (id: string, title: string) => Promise<number>
     removeNote: (id: string) => Promise<number>
     fetchNotes: () => void
 }
@@ -21,6 +22,7 @@ export const firebaseInitialState:TFirebaseState = {
     loading: true,
     showLoader: () => {},
     addNote: title => new Promise(() => {}),
+    editNote: (id, title) => new Promise(() => {}),
     removeNote: id => new Promise(() => {}),
     fetchNotes: () => {}
 }
@@ -62,7 +64,22 @@ const FirebaseState: React.FC = ({children}) => {
             }
             dispatch({ type: ADD_NOTE, payload })
             alert.show('Заметка создана', 'success')
-            setTimeout(alert.hide, 3000)
+            setTimeout(alert.hide, 5000)
+            return 0
+        } catch (e) {
+            alert.error(e.message)
+            return 1
+        }
+    }
+    const editNote = async (id: string, title: string):Promise<number> => {
+        const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        const date = new Date().toLocaleString('ru-RU', options)
+        const note = { title, date }
+        try {
+            await axios.put(`${url}/notes/${id}.json`, note)
+            dispatch({ type: EDIT_NOTE, payload: {...note, id} })
+            alert.show('Заметка была изменена', 'success')
+            setTimeout(alert.hide, 5000)
             return 0
         } catch (e) {
             alert.error(e.message)
@@ -74,7 +91,7 @@ const FirebaseState: React.FC = ({children}) => {
             await axios.delete(`${url}/notes/${id}.json`)
             dispatch({ type: REMOVE_NOTE, payload: id })
             alert.show('Заметка была удалена!')
-            setTimeout(alert.hide, 3000)
+            setTimeout(alert.hide, 5000)
             return 0
         } catch (e) {
             alert.error(e.message)
@@ -84,7 +101,7 @@ const FirebaseState: React.FC = ({children}) => {
     }
     return (
         <FirebaseContext.Provider value={{
-            ...state, showLoader, addNote, removeNote, fetchNotes
+            ...state, showLoader, addNote, editNote, removeNote, fetchNotes
         }}>
             {children}
         </FirebaseContext.Provider>

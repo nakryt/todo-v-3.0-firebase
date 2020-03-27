@@ -1,4 +1,4 @@
-import {SHOW_LOADER, TNoteActions, ADD_NOTE, FETCH_NOTES, REMOVE_NOTE} from "../actionTypes";
+import {SHOW_LOADER, TNoteActions, ADD_NOTE, EDIT_NOTE, FETCH_NOTES, REMOVE_NOTE} from "../actionTypes";
 import {TFirebaseState} from "./FirebaseState";
 import {createDefaultNote} from "./FirebaseState";
 
@@ -13,6 +13,16 @@ export const firebaseReducer = (state:TFirebaseState, action:TNoteActions) => {
             return {
                 ...state,
                 notes: [ ...state.notes, action.payload ]
+            }
+        case EDIT_NOTE:
+            return {
+                ...state,
+                notes: state.notes.map(item => {
+                    if (item.id === action.payload.id) {
+                        return {...item, date: action.payload.date, title: action.payload.title}
+                    }
+                    return item
+                })
             }
         case FETCH_NOTES:
             return {
