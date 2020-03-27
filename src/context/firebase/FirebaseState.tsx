@@ -61,7 +61,7 @@ const FirebaseState: React.FC = ({children}) => {
     const addNote = async (title: string):Promise<number> => {
         const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
         const date = new Date().toLocaleString('ru-RU', options)
-        const note = { title, date, important: false, done: true }
+        const note = { title, date, important: false, done: false }
         try {
             const res = await axios.post(`${url}/notes.json`, note)
             const payload = {
