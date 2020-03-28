@@ -57,7 +57,7 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
                         
 
                         <div className='editIconsWrap'>
-                            <i className='fa fa-check mr-3 text-success' title='Сохранить' onClick={saveHandler} />
+                            <i className='fa fa-check mr-4 text-success' title='Сохранить' onClick={saveHandler} />
                             <i className='fa fa-times text-danger' title='Отмена' onClick={cancelHandler} />
                         </div>
                     </form> :
