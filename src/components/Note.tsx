@@ -87,14 +87,14 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
                     <div className='editIcons' >
                         <button
                             type='button'
-                            className={`btn btn-sm font-weight-bold align-self-center mr-2 ${important ? 'btn-info' : 'btn-outline-info'}`}
+                            className={`btn btn-sm font-weight-bold align-self-center mr-2 btn-important ${important ? 'btn-info' : 'btn-outline-info'}`}
                             onClick={() => onImportantClick(id)}
                             title={important ? 'Сделать заметку обычной' : 'Сделать заметку важной'}
                         ><i className="fa fa-exclamation" /></button>
 
                         <button
                             type='button'
-                            className='btn btn-outline-success btn-sm font-weight-bold align-self-center mr-2'
+                            className='btn btn-outline-success btn-sm font-weight-bold align-self-center mr-2 btn-edit'
                             onClick={() => {
                                 setIsEdit(true)
                             }}
@@ -102,7 +102,7 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
                         ><i className='fa fa-edit' /></button>
                         <button
                             type='button'
-                            className='btn btn-outline-danger btn-sm font-weight-bold align-self-center'
+                            className='btn btn-outline-danger btn-sm font-weight-bold align-self-center btn-delete'
                             onClick={() => onRemove(id)}
                             title='Удалить заметку'
                         ><i className='fa fa-times' /></button>
