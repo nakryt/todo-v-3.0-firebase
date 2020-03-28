@@ -12,7 +12,7 @@ export const firebaseReducer = (state: TFirebaseState, action: TNoteActions) => 
             }
             return {
                 ...state,
-                notes: [...state.notes, action.payload]
+                notes: [action.payload, ...state.notes]
             }
         case EDIT_NOTE:
             return {

@@ -58,9 +58,9 @@ const FirebaseState: React.FC = ({children}) => {
         }
 
     }
+
     const addNote = async (title: string):Promise<number> => {
-        const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-        const date = new Date().toLocaleString('ru-RU', options)
+        const date = Number(new Date())
         const note = { title, date, important: false, done: false }
         try {
             const res = await axios.post(`${url}/notes.json`, note)
@@ -77,13 +77,15 @@ const FirebaseState: React.FC = ({children}) => {
         }
     }
     const editNote = async (note: TNote, title: string):Promise<number> => {
-        const options = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-        const date = new Date().toLocaleString('ru-RU', options)
-        const newNote = { ...note, title, date }
-        const { id } = note
+        const date = Number(new Date())
+        const {id} = note
+        const newNote = {...note, title, date}
+        if (newNote.id) {
+            delete newNote.id
+        }
         try {
             await axios.put(`${url}/notes/${id}.json`, newNote)
-            dispatch({ type: EDIT_NOTE, payload: {...newNote} })
+            dispatch({ type: EDIT_NOTE, payload: {...newNote, id} })
             alert.show('Заметка была изменена', 'success')
             setTimeout(alert.hide, 5000)
             return 0
@@ -106,7 +108,11 @@ const FirebaseState: React.FC = ({children}) => {
     }
     const changeImportantProp = async (id: string) => {
         const note = state.notes.find(item => item.id === id)
-        const newNote = { ...note, important: !note!.important }
+        let newNote;
+        if (note) {
+            newNote = {...note, important: !note!.important}
+            delete newNote.id
+        }
         try {
             await axios.put(`${url}/notes/${id}.json`, newNote)
             dispatch({ type: CHANGE_IMPORTANT_PROP, id })
@@ -117,7 +123,11 @@ const FirebaseState: React.FC = ({children}) => {
     }
     const changeDoneProp = async (id: string) => {
         const note = state.notes.find(item => item.id === id)
-        const newNote = { ...note, done: !note!.done }
+        let newNote;
+        if (note) {
+            newNote = {...note, done: !note!.done}
+            delete newNote.id
+        }
         try {
             await axios.put(`${url}/notes/${id}.json`, newNote)
             dispatch({ type: CHANGE_DONE_PROP, id })

@@ -14,6 +14,8 @@ type TInputChange = React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<H
 
 const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportantClick }) => {
     const { id, title, date, important, done, showButton = true } = note
+    const formatDateOptions = { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    const formatedDate = date ? new Date(date).toLocaleString('ru-RU', formatDateOptions) : null
     const [isEdit, setIsEdit] = useState(false)
     const [editText, setEditText] = useState(title)
     const changeEditTextHandler = (e: TInputChange) => {
@@ -68,13 +70,13 @@ const Note: React.FC<TProps> = ({ note, onRemove, onChange, onClick, onImportant
                                             {title}
                                         </span>
                                     </s>
-                                    <small className='date'>{date}</small>
+                                    <small className='date'>{formatedDate}</small>
                                 </> :
                                 <>
-                                    <strong className={`mr-3 ${important && 'text-danger'}`}>
+                                    <strong className={`mr-3 ${important ? 'text-danger' : ''}`}>
                                         {title}
                                     </strong>
-                                    <small className='date'>{date}</small>
+                                    <small className='date'>{formatedDate}</small>
                                 </>
                         }
                     </div>

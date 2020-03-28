@@ -19,10 +19,12 @@ const Notes: React.FC<TProps> = ({notes, onRemove, onChange, onClick, onImportan
     if (!notes.length) {
         return <ListGroupItem>Список пуст</ListGroupItem>
     }
+    const sortedNotes = (notes[0].id !== 'default' && notes.length > 1) ?
+        notes.slice().sort((a, b) => b.date! - a.date!) : notes
     return (
 
         <TransitionGroup component={'ul'} className={'list-group'}>
-            {notes.map(note =>
+            {sortedNotes.map(note =>
             <CSSTransition key={note.id} timeout={800} classNames={'note'}>
                 <Note
                     onRemove={onRemove}

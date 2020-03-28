@@ -3,9 +3,10 @@ export type TNote = {
     title: string
     important: boolean
     done: boolean
-    date?: string
+    date?: number
     showButton?: boolean
 }
+export type TNoteWithoutId = Omit<TNote, 'id'>
 export type TNotes = Array<TNote>
 //
 // export type TAlertType = 'success' | 'danger' | 'warning'
