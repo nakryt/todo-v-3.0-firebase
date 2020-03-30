@@ -20,14 +20,14 @@ code {
 
 .alert-wrapper {
   position: relative;
-  min-height: 70px;
+  min-height: 60px;
   width: 100%;
 }
 
 .alert {
   position: absolute;
   width: 100%;
-
+  margin-bottom: 0.5rem;
 }
 
 .alert-enter {
